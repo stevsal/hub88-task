@@ -1,0 +1,59 @@
+{
+    "posts": [
+      { "id": 1, "title": "json-server", "author": "typicode" }
+    ],
+    "comments": [
+      { "id": 1, "body": "some comment", "postId": 1 },
+      { "id": 2, "body": "some comment"}
+    ],
+    "users": [
+        {
+            "id": 1,
+            "user": "john12345",
+            "status": "",
+            "request_uuid": "",
+            "country": "FR",
+            "jurisdiction:": "MGA",
+            "sub_partner_id": "123_sub",
+            "birth_date": "1980-10-20",
+            "registration_date": "2010-10-20",
+            "tags": [
+              "VIP",
+              "affiliate"
+            ],
+            "sex": "MALE",
+            "affiliate_id": "124_af",
+            "currency": "USD",
+            "balance": 100500
+        },
+        {
+            "id": 2,
+            "user": "jim143",
+            "status": "",
+            "request_uuid": "",
+            "country": "UK",
+            "jurisdiction:": "MGA",
+            "sub_partner_id": "123_sub",
+            "birth_date": "1980-10-20",
+            "registration_date": "2010-10-20",
+            "tags": [
+              "VIP"
+            ],
+            "sex": "MALE",
+            "affiliate_id": "124_af",
+            "currency": "USD",
+            "balance": 50000
+        }
+    ],
+    "users_transactions":[
+        {
+            "user": "jim143",
+            "transaction_uuid": "16d2dcfe-b89e-11e7-854a-58404eea6d16",
+            "reference_transaction_uuid": "16d2dcfe-b89e-11e7-854a-58404eea6d16",
+            "game_code": "clt_dragonrising",
+            "currency": "EUR",
+            "bet": "zero",
+            "amount": 100500
+        }
+    ]
+  }
