@@ -20,7 +20,7 @@ const userInfo = async (user, request_uuid) => {
     return currentUser;
 }
 
-const userBalance = async (user, token, request_uuid, gamecode) => {
+const userBalance = async (user, request_uuid, gamecode) => {
     var userBalanceObj
     currentUser = user
     reqid = request_uuid
@@ -40,7 +40,7 @@ const userBalance = async (user, token, request_uuid, gamecode) => {
     return userBalanceObj
 }
 
-async function getUserInfofromDB(user,reqid) {
+  const getUserInfofromDB = async function (user,reqid) {
     var name = user
     return axios.get('http://localhost:3001/users?user='+name)
     .then(
@@ -57,3 +57,4 @@ async function getUserInfofromDB(user,reqid) {
 
 exports.userInfo = userInfo
 exports.userBalance = userBalance
+exports.getUserInfofromDB = getUserInfofromDB
