@@ -1,37 +1,61 @@
 const axios = require('axios');
+const MongoClient = require('mongodb').MongoClient
+var dbUrl = "mongodb+srv://vorumadmin:rrcteam9182@cluster0.jnzp6.mongodb.net/testDB?retryWrites=true&w=majority"
 var taurl = 'http://localhost:3001/users_transactions'
 var userUrl = 'http://localhost:3001/users'
 
 
 const insertIntoDB = async function (data) {
-    axios.post(taurl, data).then(
-        res => {
-            console.log(res.data)
-        }
-    ).catch(
-        error => console.log(error)
-    )
+    const client = new MongoClient(dbUrl)
+    try {
+        await client.connect()
+        const result = await client.db('testDB').collection('transactions').insertOne(
+           data
+        )
+    } catch {
+        console.error(error)
+    } finally { 
+        await client.close()
+        console.log('closed')
+    }
 }
 
 const changeUserInDB = async function (data,id) {
-    axios.patch(userUrl+"/"+id, data).then(
-        res => {
-            console.log(res.data)
-        }
-    ).catch(
-        error => console.log(error)
-    )
+    const client = new MongoClient(dbUrl)
+    try {
+        await client.connect()
+        const result = await client.db('testDB').collection('users').updateOne(
+           {id: id}, {$set: data}
+        )
+    } catch {
+        console.error(error)
+    } finally { 
+        await client.close()
+        console.log('closed')
+    }
 }
 
-const checkDBForTransaction = async function (user,key) {
-    return axios.get(taurl+'?user='+user+'&transaction_uuid='+key)
-    .then(
-        response => {
-            //console.log(response.data[0],"responseDATATATATAT");
-            return response.data[0];
+const checkDBForTransaction = async function (params) {
+    const client = new MongoClient(dbUrl) 
+    try {
+        await client.connect()
+            const result = await client.db('testDB').collection('transactions').findOne(
+                params  
+            )
+        if (result) {
+            console.log(result, 'found transaction for this user with this uuid');
+            return result
+        } else {
+            console.log('did not find transaction')
+            return undefined
         }
-    )
-    .catch(error => console.log(error))
+    } catch (error) {
+        console.error(error)
+    } finally {
+        await client.close()
+        console.log('closed')
+    }
+    
 }
 
 exports.changeUserInDB = changeUserInDB

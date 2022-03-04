@@ -7,15 +7,6 @@ const middlewares = jsonServer.defaults()
 const port = 3000
 const userRequests = require('./getUserInfo.js')
 const transactions = require('./transactions.js')
-var dbUrl = "mongodb+srv://vorumadmin:rrcteam9182@cluster0.jnzp6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-const MongoClient = require('mongodb').MongoClient
-
-/*MongoClient.connect(dbUrl).then(
-  client => {
-  console.log('Connected to Database')
-  const db = client.db('testDB')
-})
-.catch(error => console.error(error))*/
 
 server.use(middlewares)
 server.use(router)
@@ -52,6 +43,7 @@ app.post('/transaction/win/:header?', async (req,res) => {
   var data = req.body
   data.id = ''
   data.type = 'win'
+  console.log(data);
   res.json(await transactions.transactionWin(data))
 })
 
