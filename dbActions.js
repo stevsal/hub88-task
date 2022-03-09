@@ -1,6 +1,7 @@
 const axios = require('axios');
 const MongoClient = require('mongodb').MongoClient
-var dbUrl = "mongodb+srv://vorumadmin:rrcteam9182@cluster0.jnzp6.mongodb.net/testDB?retryWrites=true&w=majority"
+require('dotenv').config()
+var dbUrl = process.env.DB_URL
 var taurl = 'http://localhost:3001/users_transactions'
 var userUrl = 'http://localhost:3001/users'
 
@@ -14,6 +15,8 @@ const insertIntoDB = async function (data) {
         )
     } catch {
         console.error(error)
+        await client.close()
+        return error
     } finally { 
         await client.close()
         console.log('closed')
@@ -39,7 +42,7 @@ const checkDBForTransaction = async function (params) {
     const client = new MongoClient(dbUrl) 
     try {
         await client.connect()
-            const result = await client.db('testDB').collection('transactions').findOne(
+            const result =  await client.db('testDB').collection('transactions').findOne(
                 params  
             )
         if (result) {

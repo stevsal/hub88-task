@@ -1,11 +1,10 @@
 const axios = require('axios');
-var dbUrl = "mongodb+srv://vorumadmin:rrcteam9182@cluster0.jnzp6.mongodb.net/testDB?retryWrites=true&w=majority"
+require('dotenv').config()
+var dbUrl = process.env.DB_URL 
 const MongoClient = require('mongodb').MongoClient
-var currentUser = ""
 
 const userInfo = async (user, request_uuid) => { 
-    currentUser = user;
-    console.log('curretnuser', currentUser);
+    var currentUser = user;
     reqid = request_uuid;
     await getUserInfofromDB(currentUser, reqid).then(
         response => {
@@ -13,7 +12,6 @@ const userInfo = async (user, request_uuid) => {
         }
     );
     if (currentUser != null) {
-        console.log("USERRRRRRRRRRRRr", JSON.stringify(currentUser));
         currentUser.request_uuid = reqid
         currentUser.status = "RS_OK"
         delete currentUser.currency
@@ -23,7 +21,7 @@ const userInfo = async (user, request_uuid) => {
     } else {
         console.log("User does not exist");
         return {
-            user: currentUser,
+            user: user,
             status: 'RS_ERROR',
         }
     }
@@ -32,14 +30,16 @@ const userInfo = async (user, request_uuid) => {
 
 const userBalance = async (user, request_uuid, gamecode) => {
     var userBalanceObj
-    currentUser = user
+    var currentUser = user
     reqid = request_uuid
     await getUserInfofromDB(currentUser, reqid).then(
         response => {
             currentUser = response;
         }
-    );
-    userBalanceObj = {
+    )
+    if (currentUser != null) {
+        console.log(currentUser);
+        userBalanceObj = {
         user: currentUser.user,
         status: "RS_OK",
         request_uuid: reqid,
@@ -48,6 +48,14 @@ const userBalance = async (user, request_uuid, gamecode) => {
     }
     console.log(userBalanceObj);
     return userBalanceObj
+    } else {
+        console.log("User does not exist");
+        return {
+            user: user,
+            status: 'RS_ERROR'
+        }
+    }
+    
 }
 
   const getUserInfofromDB = async function (user,reqid) {

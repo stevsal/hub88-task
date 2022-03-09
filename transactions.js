@@ -37,8 +37,7 @@ const transactionWin = async (data) => {
             request_uuid: data.request_uuid,
         }
     }
-    //console.log(isEmpty(dbData));
-    //console.log(typeof dbData,"DBDAATATATA");
+
 }
 
 
@@ -49,9 +48,6 @@ const transactionRollback = async function (data) {
     var currency
     var newBalance = 0
     var dbData
-    if (await getDBdata()) {
-        
-    }
     dbData = await getDBdata(data.user, refid, data.type)
     if (dbData != undefined) {
         amount = dbData.amount
@@ -98,54 +94,33 @@ const transactionBet = async function (data) {
     var dbData
     var id
     var newBalance
-    /*if (data.amount < 0) {
+    if (data.amount < 0) {
+        console.log('bad amount');
         return {
             user: data.user,
             status: "RS_ERROR_WRONG_TYPES",
             request_uuid: data.request_uuid,
         }
-    }*/
+    }
     dbData = await getDBdata(data.user,data.transaction_uuid,data.type)
     if (dbData == undefined) {
-        await userRequests.getUserInfofromDB(data.user,data.transaction_uuid).then(
-            res => {
-                if (checkForCurrency(data.currency, res.currency) == false) {
-                    return {
-                        user: data.user,
-                        status: "RS_ERROR_WRONG_CURRENCY",
-                        request_uuid: data.request_uuid,
-                    }
-                    
-                } if (res.balance < data.amount) {
-                    return {
-                        user: data.user,
-                        status: "RS_ERROR_NOT_ENOUGH_MONEY",
-                        request_uuid: data.request_uuid,
-                        balance: res.balance,
-                        amount: data.amount
-                    }
-                } else {
-                    console.log('All fine');
-                    id = res.id
-                    newBalance = {
-                        balance: res.balance - data.amount,
-                        request_uuid: data.request_uuid
-                    }
-                    currency = res.currency
-
-                }
+       var userData = await userRequests.getUserInfofromDB(data.user,data.transaction_uuid)
+        newBalance = await checkBetData(data,userData)
+        if (newBalance.status == "RS_OK") {
+            delete newBalance.status
+            dbActions.changeUserInDB(newBalance, userData.id)
+            dbActions.insertIntoDB(data)
+            return {
+                user: data.user,
+                status: "RS_OK",
+                request_uuid: data.request_uuid,
+                currency: userData.currency,
+                balance: newBalance.balance
             }
-        )
-        dbActions.changeUserInDB(newBalance, id)
-        dbActions.insertIntoDB(data)
-        console.log(newBalance,"newbalancancn");
-        return {
-            user: data.user,
-            status: "RS_OK",
-            request_uuid: data.request_uuid,
-            currency: currency,
-            balance: newBalance.balance
+        } else {
+            return newBalance
         }
+        
     } else {
         console.log('is there');
         return {
@@ -174,11 +149,35 @@ async function getDBdata(user,reqid,type) {
     return dbData
 }
 
-async function checkForCurrency(currency, userCurrency,) {
-    if (currency == userCurrency) {
-        console.log('checks passed');
-        return true
-    } else {return false}
+async function checkBetData(data, userData,) {
+    console.log(data.currency, userData.currency);
+    if (data.currency != userData.currency) {
+        console.log('wrong currency');
+        return {
+            user: data.user,
+            status: "RS_ERROR_WRONG_CURRENCY",
+            request_uuid: data.request_uuid,
+        }
+        
+    } if (userData.balance < data.amount) {
+        console.log('not enough money');
+        return {
+            user: data.user,
+            status: "RS_ERROR_NOT_ENOUGH_MONEY",
+            request_uuid: data.request_uuid,
+            balance: userData.balance,
+            amount: data.amount
+        }
+    } else {
+        console.log('All fine');
+        id = userData.id
+        return  {
+            status: "RS_OK",
+            balance: userData.balance - data.amount,
+            request_uuid: data.request_uuid
+        }
+
+    }
 }
 exports.transactionWin = transactionWin
 exports.transactionRollback = transactionRollback

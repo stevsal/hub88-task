@@ -7,21 +7,16 @@ const middlewares = jsonServer.defaults()
 const port = 3000
 const userRequests = require('./getUserInfo.js')
 const transactions = require('./transactions.js')
-var dbUrl = "mongodb+srv://vorumadmin:rrcteam9182@cluster0.jnzp6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+require('dotenv').config()
+var dbUrl = process.env.DB_URL
 const MongoClient = require('mongodb').MongoClient
 
-/*MongoClient.connect(dbUrl).then(
-  client => {
-  console.log('Connected to Database')
-  const db = client.db('testDB')
-})
-.catch(error => console.error(error))*/
 
-server.use(middlewares)
+/*server.use(middlewares)
 server.use(router)
 server.listen(3001, () => {
   console.log('JSON Server is running');
-})
+})*/
 
 app.use(express.json())
 
@@ -32,8 +27,9 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-//Could have used objects to send data to functions
+
 app.post('/user/info/:header?', async (req,res) => {
+  res.status(200)
   var user = req.body.user
   var request_uuid = req.body.request_uuid
   var body = req.body
@@ -41,6 +37,7 @@ app.post('/user/info/:header?', async (req,res) => {
 })
 
 app.post('/user/balance/:header?', async (req,res) => {
+  res.status(200)
   var user = req.body.user
   var request_uuid = req.body.request_uuid
   var token = req.body.token
@@ -49,6 +46,7 @@ app.post('/user/balance/:header?', async (req,res) => {
 })
 
 app.post('/transaction/win/:header?', async (req,res) => {
+  res.status(200)
   var data = req.body
   data.id = ''
   data.type = 'win'
@@ -56,6 +54,7 @@ app.post('/transaction/win/:header?', async (req,res) => {
 })
 
 app.post('/transaction/rollback/:header?', async (req,res) => {
+  res.status(200)
   var data = req.body
   data.id = ''
   data.type = 'rollback'
@@ -64,6 +63,7 @@ app.post('/transaction/rollback/:header?', async (req,res) => {
 })
 
 app.post('/transaction/bet/:header?', async (req,res) => {
+  res.status(200)
   var data = req.body
   data.id = ''
   data.type = 'bet'

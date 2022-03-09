@@ -20,6 +20,7 @@
   "homepage": "https://github.com/stevsal/hub88-task#readme",
   "dependencies": {
     "axios": "^0.26.0",
+    "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "json-server": "^0.17.0",
     "mongodb": "^4.4.1"
